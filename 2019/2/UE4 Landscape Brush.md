@@ -6,7 +6,7 @@
 显然，UE4地形笔刷是通过再次绘制地形块的方式执行笔刷的渲染。
 ![](https://raw.githubusercontent.com/timi-liuliang/writing/master/2019/2/BrushCapture.png)  
 
-#### 通过分析 FLandscapeBrushCircle_Smooth 类实现，可以发现笔刷的实现主要有两个关键点。
+#### 通过分析 FLandscapeBrushCircle_Smooth 类实现，可以发现笔刷的实现主要有三个关键点。
 
 ##### 1. 设置地形块笔刷材质
 ```cpp
@@ -37,8 +37,9 @@ for (ULandscapeComponent* Component : BrushMaterialComponents)
 图 3. LandscapeEditor 模块，其Runtime逻辑依赖Editor状态。
 
 #### 附件
+[LandscapeBrushRender.h](https://github.com/timi-liuliang/writing/blob/master/2019/2/LandscapeBrushRender.h)  
+[LandscapeBrushRender.cpp](https://github.com/timi-liuliang/writing/blob/master/2019/2/LandscapeBrushRender.cpp)
 
-
-参考：  
-[Applying Decals to Arbitrary Surfaces] Game Programming Gems2. 4.8   
-[Decals] https://docs.unrealengine.com/en-us/Resources/ContentExamples/Decals   
+#### 参考：  
+[1] 德洛拉,袁国忠,陈蔚.对任意表面应用贴花.游戏编程精粹2(2003), p.354-358.ISBN 7-115-10871-4   
+[2] Apex. (2013-2019) [Decals](https://docs.unrealengine.com/en-us/Resources/ContentExamples/Decals)   
