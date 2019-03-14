@@ -3,10 +3,10 @@
 ![](https://raw.githubusercontent.com/timi-liuliang/writing/master/2019/2/Brush.png)  
 
 #### 首先，我们通过Nsight捕帧分析，确认笔刷的渲染方式   
-显然，UE4地形笔刷是通过再次绘制地形块的方式执行笔刷的渲染。
+显然，UE4是通过再次绘制地形块的方式实现的笔刷的渲染。
 ![](https://raw.githubusercontent.com/timi-liuliang/writing/master/2019/2/BrushCapture.png)  
 
-#### 通过分析 FLandscapeBrushCircle_Smooth 类实现，可以发现笔刷的实现主要有三个关键点。
+#### 通过分析 [FLandscapeBrushCircle_Smooth](https://github.com/timi-liuliang/UnrealEngine/blob/8696faa54bf2f89ca50d34e6fb3dcc461a810185/Engine/Source/Editor/LandscapeEditor/Private/LandscapeEdModeBrushes.cpp#L876) 类实现，可以发现笔刷的实现主要有三个关键点。
 
 ##### 1. 设置地形块笔刷材质
 ```cpp
