@@ -34,9 +34,9 @@ for (ULandscapeComponent* Component : BrushMaterialComponents)
 
 ##### 3. 设置 GLandscapeEditModeActive 为 true  
 ![](https://raw.githubusercontent.com/timi-liuliang/writing/master/2019/2/GLandscapeEditModeActive.png)  
-图 3. LandscapeEditor 模块，其Runtime逻辑依赖Editor状态。
+如图所示：LandscapeEditor 模块，其Runtime逻辑依赖Editor状态，导致必须设置GLandscapeEditModeActive 为true，才能正常渲染地形笔刷。
 
-#### 附件
+#### 精简版笔刷实现
 [LandscapeBrushRender.h](https://github.com/timi-liuliang/writing/blob/master/2019/2/LandscapeBrushRender.h)  
 [LandscapeBrushRender.cpp](https://github.com/timi-liuliang/writing/blob/master/2019/2/LandscapeBrushRender.cpp)
 
