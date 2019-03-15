@@ -1,5 +1,5 @@
 # 虚幻地形笔刷实现分析
-#### 今天我们要讨论的主角是地形笔刷。
+#### 今天我们要讨论的主角是地形笔刷。 
 ![](https://raw.githubusercontent.com/timi-liuliang/writing/master/2019/2/Brush.png)  
 
 #### 首先，我们通过Nsight捕帧分析，确认笔刷的渲染方式   
