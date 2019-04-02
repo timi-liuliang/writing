@@ -14,13 +14,9 @@ if(result!=FT_Err_Ok)
 ```cpp
 FT_Face						m_face;
 FT_Error error = FT_New_Memory_Face(library, m_memory->getData<Byte*>(), m_memory->getSize(), 0, &m_face);
-if (error == FT_Err_Unknown_File_Format)
+if (error)
 {
-		EchoLogError("the font file [%s] could be opened and read, but it appears that its font format is unsupported", filePath);
-}
-else if (error)
-{
-	 EchoLogError("font file [%s] could not be opened or read, or that it is broken...", filePath);
+  EchoLogError("font file [%s] could not be opened or read, or that it is broken...", filePath);
 }
 ```
 ## 加载 Glyph
@@ -87,5 +83,5 @@ bool FontFace::copyGlyphToBitmap(Color* oColor, i32& ioWidth, i32& ioHeight, i32
 
 ### 参考
 [1] FreeType.[FreeType Tutorial](https://www.freetype.org/freetype2/docs/tutorial/index.html)   
-[2] JimScott.[Packing Lightmaps](http://www.blackpawn.com/texts/lightmaps/default.html)
-[3] https://www.freetype.org/freetype2/docs/tutorial/example1.c
+[2] JimScott.[Packing Lightmaps](http://www.blackpawn.com/texts/lightmaps/default.html)   
+[3] https://www.freetype.org/freetype2/docs/tutorial/example1.c   
