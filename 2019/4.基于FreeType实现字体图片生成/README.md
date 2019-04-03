@@ -1,8 +1,19 @@
 # FreeType 基础
 ## 介绍
 FreeType是一款用于字体渲染的的软件库，其基于C语言实现。具有免费、开源、跨平台、小巧、高效、高自定义性等特点。 
+#### 广泛应用
+在我们日常接触的各种应用与操作系统中，几乎所有的字体渲染都由FreeType来提供底支持。全球有数以十亿计的设备正在使用FreeType。
 
-## 文件格式支持
+|使用FreeType的软件与操作系统|
+|---|
+|[GNU/Linux](https://www.gnu.org/gnu/why-gnu-linux.html) and other free Unix operating system derivates like FreeBSD or NetBSD;|
+|[iOS](https://www.apple.com/ios/ios-12/), Apple's mobile operating system for iPhones and iPads;|
+|[Android](https://www.android.com/), Google's operating system for smartphones and tablet computers;|
+|[ChromeOS](https://www.chromium.org/chromium-os), Google's operating system for laptop computers;|
+|[ReactOS](https://reactos.org/), a free open source operating system based on the best design principles found in the Windows NT architecture;|
+|[Ghostscript](https://www.ghostscript.com/), a PostScript interpreter used in many printers.|
+
+#### 丰富的文件格式支持
 FreeType使用统一的接口实现对不同字体格式文件的访问，其支持的格式如下表所示。
 
 |序号|FreeType支持字体|
