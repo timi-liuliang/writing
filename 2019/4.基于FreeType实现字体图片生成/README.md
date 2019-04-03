@@ -81,6 +81,10 @@ bool FontFace::copyGlyphToBitmap(Color* oColor, i32& ioWidth, i32& ioHeight, i32
 }
 ```
 
+### 扩展阅读
+##### [装箱算法](http://www.blackpawn.com/texts/lightmaps/default.html)
+##### [Distance Field Fonts](https://github.com/libgdx/libgdx/wiki/Distance-field-fonts)
+
 ### 参考
 [1] FreeType.[FreeType Tutorial](https://www.freetype.org/freetype2/docs/tutorial/index.html)   
 [2] JimScott.[Packing Lightmaps](http://www.blackpawn.com/texts/lightmaps/default.html)   
