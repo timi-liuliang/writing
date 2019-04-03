@@ -1,10 +1,17 @@
 # FreeType 基础
 ## 介绍
 
-## 确定输入与输出
-#### CharCode
-#### FontSize
-#### Bitmap
+## 基本概念
+对于FreeType的调用，存在这三个基本单元
+1.FT_Library: 有且仅有一个Library实例    
+2.FT_Face: 每一个字体文件对应一个Face()   
+3.FT_GlyphSlot 每一个字符对应一个Glyph 
+
+## 输入与输出
+#### CharCode 字符编码
+#### FontFile 字体文件
+#### FontSize 字体大小
+#### GlyphBitmap 字符位图
 ## 编译
 [CMakeLists.txt](https://github.com/timi-liuliang/echo/blob/master/thirdparty/freetype-2.6/CMakeLists.txt)
 
