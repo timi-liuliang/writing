@@ -1,5 +1,10 @@
 # FreeType 基础
 ## 介绍
+
+## 确定输入与输出
+#### CharCode
+#### FontSize
+#### Bitmap
 ## 编译
 [CMakeLists.txt](https://github.com/timi-liuliang/echo/blob/master/thirdparty/freetype-2.6/CMakeLists.txt)
 
@@ -28,7 +33,7 @@ if (error)
   EchoLogError("font file [%s] could not be opened or read, or that it is broken...", filePath);
 }
 ```
-## 加载 Glyph
+## 根据 charCode 加载 Glyph
 ```cpp
 FontGlyph* FontFace::loadGlyph(i32 charCode, i32 fontSize)
  {
