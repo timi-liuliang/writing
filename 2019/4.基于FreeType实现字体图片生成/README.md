@@ -1,5 +1,24 @@
 # FreeType 基础
 ## 介绍
+FreeType是一款用于字体渲染的的软件库，其基于C语言实现。具有免费、开源、跨平台、小巧、高效、高自定义性等特点。 
+
+## 文件格式支持
+FreeType使用统一的接口实现对不同字体格式文件的访问，其支持的格式如下表所示。
+
+|序号|FreeType支持字体|
+|---|---|
+|1|TrueType fonts (TTF) and TrueType collections (TTC)|
+|2|CFF fonts  | 
+|3|WOFF fonts   |
+|4|OpenType fonts (OTF, both TrueType and CFF variants) and OpenType collections (OTC)   |
+|5|Type 1 fonts (PFA and PFB)   |
+|6|CID-keyed Type 1 fonts   |
+|7|SFNT-based bitmap fonts, including color Emoji |  
+|8|X11 PCF fonts   |
+|9|Windows FNT fonts   |
+|10|BDF fonts (including anti-aliased ones)   |
+|11|PFR fonts   |
+|12|Type 42 fonts (limited support)   |
 
 ## 基本概念
 对于FreeType的调用，存在这三个基本单元
