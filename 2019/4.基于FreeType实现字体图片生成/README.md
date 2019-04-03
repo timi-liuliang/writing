@@ -1,4 +1,4 @@
-# FreeType 入门基础示例
+# FreeType 基础
 ## 介绍
 ## 编译
 [CMakeLists.txt](https://github.com/timi-liuliang/echo/blob/master/thirdparty/freetype-2.6/CMakeLists.txt)
