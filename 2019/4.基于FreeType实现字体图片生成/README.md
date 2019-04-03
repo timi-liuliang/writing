@@ -1,6 +1,15 @@
-# 基于FreeType,实现字体图片生成
+# FreeType 入门基础示例
+## 介绍
+## 编译
+[CMakeLists.txt](https://github.com/timi-liuliang/echo/blob/master/thirdparty/freetype-2.6/CMakeLists.txt)
 
-## 1.初始化FT_Library
+## 包含头文件
+```cpp
+#include <ft2build.h>
+#include FT_FREETYPE_H
+```
+
+## 初始化FT_Library
 ```cpp
 FT_Library	m_library;
 
