@@ -32,13 +32,15 @@ FreeType使用统一的接口实现对不同字体格式文件的访问，其支
 |12|Type 42 fonts (limited support)   |
 
 ## 示例开发
-下面我们以一个示例来一步步讲解FreeType的基本概念及API调用方式。
+下面我们用一个简单的示例来一步步讲解FreeType的基本概念及API调用方式。
 
 ### 目标
-对于FreeType的调用，存在这三个基本单元
-1.FT_Library: 有且仅有一个Library实例    
-2.FT_Face: 每一个字体文件对应一个Face()   
-3.FT_GlyphSlot 每一个字符对应一个Glyph 
+本文我们的目标是把Unicode字符串"123 一曲相思" 渲染到屏幕; 首先确定输入与输出。
+#### 输入
+ 字符串、字体文件、字体大小   
+#### 输出
+ 对应字符的Bitmap   
+![](https://raw.githubusercontent.com/timi-liuliang/writing/master/2019/4.FreeType%20%E5%9F%BA%E7%A1%80/input_output.png)
 
 ### 输入与输出
  CharCode 字符编码   
