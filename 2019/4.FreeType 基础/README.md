@@ -169,7 +169,7 @@ FontGlyph* FontFace::loadGlyph(i32 charCode, i32 fontSize)
 [font_texture.h](https://github.com/timi-liuliang/echo/blob/master/engine/modules/ui/font/font_texture.h)   
 [font_texture.cpp](https://github.com/timi-liuliang/echo/blob/master/engine/modules/ui/font/font_texture.cpp)   
 ### [Distance Field Fonts](https://github.com/libgdx/libgdx/wiki/Distance-field-fonts)
-基于Bitmap的字符纹理在处理较大字体时对纹理大小要求较高，或者容易产生失真。且对轮廓及字体阴影的支持不优雅，Distance Field Fonts很好的解决了这些问题。
+基于Bitmap的字符纹理在处理较大字体时对纹理大小要求较高，容易产生失真。且对轮廓及字体阴影的支持不优雅，Distance Field Fonts很好的解决了这些问题。
 
 ## 参考
 [1] FreeType.[FreeType Tutorial](https://www.freetype.org/freetype2/docs/tutorial/index.html)   
