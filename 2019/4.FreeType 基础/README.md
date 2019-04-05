@@ -59,6 +59,7 @@ FreeType使用统一的接口实现对不同字体格式文件的访问，其支
 ```
 
 ### 初始化FT_Library
+FT_Library 代表 FreeType库的一个实例，通过调用FT_Init_FreeType函数来实例化它。应用在运行期间只需创建一个FT_Library实例，类似于Lua中的luaState*。   
 ```cpp
 FT_Library	m_library;
 
@@ -70,15 +71,17 @@ if(result!=FT_Err_Ok)
 ```
 
 ### 根据字体文件创建 FT_Face  
+每一个FT_Face对应一个字体文件，可以通过FT_New_Memory_Face 或 FT_New_Face 来创建。纠结内存占用的同学，可以使用内存映射的方式，避免字体文件占用内存。
 ```cpp
-FT_Face						m_face;
+FT_Face m_face;
 FT_Error error = FT_New_Memory_Face(library, m_memory->getData<Byte*>(), m_memory->getSize(), 0, &m_face);
 if (error)
 {
   EchoLogError("font file [%s] could not be opened or read, or that it is broken...", filePath);
 }
 ```
-### CharCode
+### 获取字符编码 CharCode
+前面我们已经初始了化了FreeType库，加载了字体文件 Dragons.ttf。接下来要通过字符的CharCode从 FT_Face中获取字符信息，首先我们需要通过字符串遍历，获取字符串中每个字符的CharCode。    
 ```cpp
 for(wchar_t c : L"ABC一曲相思")
 {
@@ -86,6 +89,19 @@ for(wchar_t c : L"ABC一曲相思")
     EchoLogError("%ld", charCode);
 }
 ```
+
+如果字符串并非utf16格式，一般需要进行字符串格式转换，以utf8 转 utf16 为例：
+	String StringUtil::WCS2MBS(const WString &str)
+	{
+        std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> conv;
+        return conv.to_bytes(str);
+	}
+
+	WString StringUtil::MBS2WCS(const String& str)
+	{
+        std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> conv;
+        return conv.from_bytes(str);
+	}
 
 ### 根据 charCode 加载 Glyph
 ```cpp
