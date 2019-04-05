@@ -164,7 +164,10 @@ FontGlyph* FontFace::loadGlyph(i32 charCode, i32 fontSize)
 
 ## 扩展阅读   
 ### [装箱算法](http://www.blackpawn.com/texts/lightmaps/default.html)
-在应用执行文本的渲染时，为了减少渲染批次。需要把每个字符对应的bitmap合并成一张较大的bitmap, 一般叫做AtlasTexture。该算法在特效纹理合并以及光照图纹理合并中也较常用。
+在应用执行文本的渲染时，为了减少渲染批次。需要把每个字符对应的bitmap合并成一张较大的bitmap, 一般叫做AtlasTexture。该算法在特效纹理合并以及光照图纹理合并中也较常用。   
+简单实现:   
+[font_texture.h](https://github.com/timi-liuliang/echo/blob/master/engine/modules/ui/font/font_texture.h)   
+[font_texture.cpp](https://github.com/timi-liuliang/echo/blob/master/engine/modules/ui/font/font_texture.cpp)   
 ### [Distance Field Fonts](https://github.com/libgdx/libgdx/wiki/Distance-field-fonts)
 基于Bitmap的字符纹理在处理较大字体时对纹理大小要求较高，或者容易产生失真。且对轮廓及字体阴影的支持不优雅，Distance Field Fonts很好的解决了这些问题。
 
