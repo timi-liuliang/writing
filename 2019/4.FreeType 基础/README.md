@@ -47,7 +47,7 @@ FreeType使用统一的接口实现对不同字体格式文件的访问，其支
 
 [FreeType 2.10.0](https://download.savannah.gnu.org/releases/freetype/)   
 
-关于FreeType的编译配置可以参考下面这个CMakeLists.txt, FreeType这种C库都是比较容易编译的，CMake不需要对不同平台做不同处理。且接口稳定，从Version 2.6.0 到现在的 Version 2.10.0, CMake未改动一行，仍然可以完美编译。   
+关于FreeType的编译配置可以参考下面这个CMakeLists.txt, FreeType这种C库都是比较容易编译的，几乎不需要对不同平台做不同处理。且接口稳定，从Version 2.6.0 到现在的 Version 2.10.0, CMake未改动一行，仍然可以完美编译。   
 
 [CMakeLists.txt](https://github.com/timi-liuliang/echo/blob/master/thirdparty/freetype-2.10.0/CMakeLists.txt)   
 
