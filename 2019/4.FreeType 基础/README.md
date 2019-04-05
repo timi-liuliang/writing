@@ -108,7 +108,8 @@ WString StringUtil::MBS2WCS(const String& str)
 }
 ```
 
-### 根据 charCode 加载 Glyph
+### 根据 CharCode 加载 Glyph
+获取了CharCode 以及 FT_Face 实例，现在就可以加载字符了。加载的字符位于FT_Face的 glyph变量中，其类型为 FT_Glyph_Slot;
 ```cpp
 FontGlyph* FontFace::loadGlyph(i32 charCode, i32 fontSize)
  {
@@ -116,7 +117,7 @@ FontGlyph* FontFace::loadGlyph(i32 charCode, i32 fontSize)
      i32 glyphIndex = FT_Get_Char_Index( m_face, charCode);
 
      // set pixel size
-     FT_Error error = FT_Set_Pixel_Sizes(m_face, fontSize * 2, fontSize * 2);
+     FT_Error error = FT_Set_Pixel_Sizes(m_face, fontSize, fontSize);
      if (error)
         return nullptr;
 
@@ -131,50 +132,43 @@ FontGlyph* FontFace::loadGlyph(i32 charCode, i32 fontSize)
      if(error)
          return nullptr;
 
-     return copyGlyphToTexture(charCode, m_face->glyph);
+     return copyGlyphToTexture(m_face->glyph);
  }
 ```
 
 ### 拷贝Glyph 到纹理
+通过FT_GlyphSlot 及其Format就可获取其对应的Bitmap数据了。此处假定bitmap->pixel_mode 格式为 FT_PIXEL_MODE_GRAY    
 ```cpp
-i32 glyphWidth = 128;
-i32 glyphHeight = 128;
-Color glyphBitmap[128*128];
-if(!copyGlyphToBitmap( glyphBitmap, glyphWidth, glyphHeight, charCode, glyphSlot))
-    return nullptr;
-
-bool FontFace::copyGlyphToBitmap(Color* oColor, i32& ioWidth, i32& ioHeight, i32 charCode, FT_GlyphSlot glyphSlot)
-{
-    FT_Bitmap* bitmap = &glyphSlot->bitmap;
-    if(ioWidth>=bitmap->width && ioHeight>=bitmap->rows)
+    void FontFace::copyGlyphToBitmap(FT_GlyphSlot glyphSlot)
     {
+        FT_Bitmap* bitmap = &glyphSlot->bitmap;
+        
+        // convert glyph to bitmap(color array)
+        i32 glyphWidth = bitmap->width;
+        i32 glyphHeight = bitmap->rows;
+        vector<Color>::type Colors(glyphWidth*glyphHeight);
+        
         for(i32 w=0; w<bitmap->width; w++)
         {
             for(i32 h=0; h<bitmap->rows; h++)
             {
                 i32 index = h * bitmap->width + w;
-                oColor[index].r = bitmap->buffer[index];
-                oColor[index].g = bitmap->buffer[index];
-                oColor[index].b = bitmap->buffer[index];
-                oColor[index].a = bitmap->buffer[index];
+                Colors[index].r = bitmap->buffer[index];
+                Colors[index].g = bitmap->buffer[index];
+                Colors[index].b = bitmap->buffer[index];
+                Colors[index].a = bitmap->buffer[index];
             }
         }
-
-        ioWidth = bitmap->width;
-        ioHeight = bitmap->rows;
-
-        return true;
     }
-
-    return false;
-}
 ```
 
 ## 扩展阅读   
 ### [装箱算法](http://www.blackpawn.com/texts/lightmaps/default.html)
+在应用执行文本的渲染时，为了减少渲染批次。需要把每个字符对应的bitmap合并成一张较大的bitmap, 一般叫做AtlasTexture。该算法在特效纹理合并以及光照图纹理合并中也较常用。
 ### [Distance Field Fonts](https://github.com/libgdx/libgdx/wiki/Distance-field-fonts)
+基于Bitmap的字符纹理在处理较大字体时对纹理大小要求较高，或者容易产生失真。且对轮廓及字体阴影的支持不优雅，Distance Field Fonts很好的解决了这些问题。
 
 ## 参考
 [1] FreeType.[FreeType Tutorial](https://www.freetype.org/freetype2/docs/tutorial/index.html)   
-[2] JimScott().[Packing Lightmaps](http://www.blackpawn.com/texts/lightmaps/default.html)   
-[3] FreeType.[example1]https://www.freetype.org/freetype2/docs/tutorial/example1.c   
+[2] JimScott.[Packing Lightmaps](http://www.blackpawn.com/texts/lightmaps/default.html)   
+[3] FreeType.[example1](https://www.freetype.org/freetype2/docs/tutorial/example1.c)   
