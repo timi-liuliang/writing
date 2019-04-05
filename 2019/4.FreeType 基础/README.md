@@ -91,17 +91,22 @@ for(wchar_t c : L"ABC一曲相思")
 ```
 
 如果字符串并非utf16格式，一般需要进行字符串格式转换，以utf8 转 utf16 为例：
-	String StringUtil::WCS2MBS(const WString &str)
-	{
-        std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> conv;
-        return conv.to_bytes(str);
-	}
 
-	WString StringUtil::MBS2WCS(const String& str)
-	{
-        std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> conv;
-        return conv.from_bytes(str);
-	}
+```cpp
+// utf16 to utf8
+String StringUtil::WCS2MBS(const WString &str)
+{
+	std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> conv;
+	return conv.to_bytes(str);
+}
+
+// utf8 to utf16
+WString StringUtil::MBS2WCS(const String& str)
+{
+	std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> conv;
+	return conv.from_bytes(str);
+}
+```
 
 ### 根据 charCode 加载 Glyph
 ```cpp
