@@ -41,7 +41,7 @@ param_value = node.parm('param_name').eval()
 2. 通过代码智能提示获取参数名称   
 ![get param name](https://raw.githubusercontent.com/timi-liuliang/writing/master/2020/3.Houdini%20Python%20%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C/get_param_name_2.png)   
 
-## 模拟按钮点击
+## 4.模拟按钮点击
 为了保证可编译工具管线全自动批处理，有时需要通过代码模拟按钮的点击。   
 ![save to disk](https://raw.githubusercontent.com/timi-liuliang/writing/master/2020/3.Houdini%20Python%20%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C/save_to_disk_button.png)  
 图：通过python 模拟点击 Save To Disk 按钮   
@@ -56,3 +56,8 @@ hf_output.parm("execute").pressButton()
 hou.parm("../heightfield_output1/execute").pressButton()
 ```
 
+## 5.如何处理 channel 函数超过一行的情况
+
+1. 鼠标点击参数的编辑区域(下图绿色区域)，进入编辑状态; 再使用快捷键 CTRL+E 打开脚本编辑对话框。
+2. 最后使用 return 返回最终结果
+![channel](https://raw.githubusercontent.com/timi-liuliang/writing/master/2020/3.Houdini%20Python%20%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C/multiline_channel.png)  
