@@ -40,3 +40,19 @@ param_value = node.parm('param_name').eval()
 ![get param name](https://raw.githubusercontent.com/timi-liuliang/writing/master/2020/3.Houdini%20Python%20%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C/get_param_name_1.png)   
 2. 通过代码智能提示获取参数名称   
 ![get param name](https://raw.githubusercontent.com/timi-liuliang/writing/master/2020/3.Houdini%20Python%20%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C/get_param_name_2.png)   
+
+## 模拟按钮点击
+为了保证可编译工具管线全自动批处理，有时需要通过代码模拟按钮的点击。   
+![save to disk](https://raw.githubusercontent.com/timi-liuliang/writing/master/2020/3.Houdini%20Python%20%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C/save_to_disk_button.png)  
+图：通过python 模拟点击 Save To Disk 按钮   
+
+1. 先获取对应节点，再通过节点的 parm 函数获取按钮, 然后通过pressButton模拟按钮点击
+```python
+hf_output = hou.node("../heightfield_output1/")
+hf_output.parm("execute").pressButton()
+```
+2. 通过 hou.parm 直接获取按钮, 再调用 pressButton 模拟点击
+```python
+hou.parm("../heightfield_output1/execute").pressButton()
+```
+
