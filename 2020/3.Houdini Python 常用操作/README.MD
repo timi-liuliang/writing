@@ -56,7 +56,7 @@ hf_output.parm("execute").pressButton()
 hou.parm("../heightfield_output1/execute").pressButton()
 ```
 
-## 5.如何处理 channel 函数超过一行的情况
+## 5.如何处理 channel 脚本超过一行的情况
 
 1. 鼠标点击参数的编辑区域(下图绿色区域)，进入编辑状态; 再使用快捷键 CTRL+E 打开脚本编辑对话框。
 2. 最后使用 return 返回最终结果
