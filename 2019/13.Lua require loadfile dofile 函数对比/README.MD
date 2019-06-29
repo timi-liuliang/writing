@@ -138,7 +138,7 @@ table: 007d24c8
 Program completed in 0.05 seconds (pid: 6420).
 ```
 
-然而此种做法与dofile一样，存在的问题就是文件会被多次编译。更好的做法是缓存loadfile的结果，并多次执行。
+然而此种做法与dofile一样，存在的问题就是文件会被多次编译。更好的做法是缓存loadfile的结果，并多次执行。   
 
 ## 参考
 [1]. [Lua模块与包](https://www.runoob.com/lua/lua-modules-packages.html)
