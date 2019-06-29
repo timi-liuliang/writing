@@ -2,7 +2,7 @@
 ### 前言
 在最近的开发工作中，因为对require的误解，产生了一些误用。特记录在案，方便查询交流。
 
-lua 模块是由变量、函数等已知元素组成的 table，因此创建一个模块就是创建一个 table。下面我们创建一个模块供测试使用。
+lua 模块是由变量、函数等已知元素组成的 table，因此创建一个模块就是创建一个 table。下面我们创建一个 enemy 模块供测试使用。
 ```lua
 -- enemy.lua
 -- create module table
@@ -28,10 +28,10 @@ end
 return Enemy;
 ```
 
-### 一. loadfile
+## loadfile
 loadfile 会加载编译对应的文件，并返回一个封装了文件内容的函数. 但不会执行此函数。
 
-1.loadfile 返回值类型为 function, 而此函数是否有返回值，则完合依赖于enemy.lua的写法。
+loadfile 返回值类型为 function, 而此函数是否有返回值，则完合依赖于enemy.lua的写法。
 ```lua
 -- file : main.lua
 local fun = loadfile("enemy.lua")
@@ -51,7 +51,7 @@ table: 006b9488
 Program completed in 0.07 seconds (pid: 6760).
 ```
 
-### 二. dofile
+## dofile
 dofile 是对 loadfile的封装，其不仅加载编译了lua文件，而且执行了loadfile返回的函数。类似于
 ```lua
 -- dofile pseudo code
@@ -61,7 +61,7 @@ function dofile(file)
 end
 ```
 
-### 三. require
+## require
 #### require 类似于 dofile, 其不同点在于， require的返回值会被缓存，多次require 返回的结果值是一样的，而每次dofile 都会返回新的结果。
 ```lua
 local enemy1 = require("enemy")
@@ -97,7 +97,7 @@ table: 011d1230
 Program completed in 0.05 seconds (pid: 11824).
 ```
 
-#### require 函数更希望我们把 require的结果当做模板来使用，不要直接修改require的返回值。而是通过拷贝产生新的对像。
+#### require 函数更希望我们把 require的结果当做模板来使用，不要直接修改require的返回值。而是通过拷贝产生新的对像(function Enemy:new())。
 ```lua
 local enemy1 = require("enemy"):new()
 local enemy2 = require("enemy"):new()
@@ -139,9 +139,6 @@ Program completed in 0.05 seconds (pid: 6420).
 ```
 
 然而此种做法与dofile一样，存在的问题就是文件会被多次编译。更好的做法是缓存loadfile的结果，并多次执行。
-
-
-
 
 ## 参考
 [1]. [Lua模块与包](https://www.runoob.com/lua/lua-modules-packages.html)
