@@ -64,6 +64,7 @@ hou.parm("../heightfield_output1/execute").pressButton()
 
 ## 6.添加属性
 我们一般通过 hou.geometry 的 addAttrib(type, name, default_value, transform_as_normal=False, create_local_variable=True) 方法添加属性。addAttrib方法的变量虽然很多，不过大部分都有默认值，一般我们只需要关心属性的 类型、名称、值.
+对于数组类型，则可以通过 addArrayAttrib 方法来实现
 ```python
 node = hou.pwd()
 geo  = node.geometry()
@@ -71,6 +72,10 @@ geo  = node.geometry()
 # add global or detail attribute
 geo.addAttrib(hou.attribType.Global, "x_coord", 3)
 geo.addAttrib(hou.attribType.Global, "y_coord", 3)
+
+# add array attribute
+geo.addArrayAttrib(hou.attribType.Global, "culture", hou.attribData.String, 1)
+geo.setGlobalAttribValue("culture", tuple(["Integrity", "Propactive", "Collaboration", "Innovation"]))
 ```
 执行代码后，可以在 Geometry Spreadsheet 中查看结果。
 
