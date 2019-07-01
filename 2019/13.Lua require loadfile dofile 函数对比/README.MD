@@ -2,6 +2,10 @@
 ### 前言
 在最近的开发工作中，因为对require的误解，产生了一些误用。特记录在案，方便查询交流。
 
+### 案例描述
+在为 [echo](https://github.com/timi-liuliang/echo) 的示例 [build-house](https://github.com/timi-liuliang/echo-examples/tree/master/build-house) 添加 重启游戏功能的时候，游戏的结点树(场景)已经被重新加载创建，然而整个游戏状态并没有重置! 原来是因为使用require函数会有缓存，导致重新加载场景后，主逻辑lua表依然是第一次require的结果。 
+
+### 测试准备
 lua 模块是由变量、函数等已知元素组成的 table，因此创建一个模块就是创建一个 table。下面我们创建一个 enemy 模块供测试使用。
 ```lua
 -- enemy.lua
@@ -142,3 +146,4 @@ Program completed in 0.05 seconds (pid: 6420).
 
 ## 参考
 [1]. [Lua模块与包](https://www.runoob.com/lua/lua-modules-packages.html)
+
