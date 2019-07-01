@@ -61,3 +61,20 @@ hou.parm("../heightfield_output1/execute").pressButton()
 1. 鼠标点击参数的编辑区域(下图绿色区域)，进入编辑状态; 再使用快捷键 CTRL+E 打开脚本编辑对话框。
 2. 最后使用 return 返回最终结果
 ![channel](https://raw.githubusercontent.com/timi-liuliang/writing/master/2020/3.Houdini%20Python%20%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C/multiline_channel.png)  
+
+## 6.添加属性
+我们一般通过 hou.geometry 的 addAttrib(type, name, default_value, transform_as_normal=False, create_local_variable=True) 方法添加属性。addAttrib方法的变量虽然很多，不过大部分都有默认值，一般我们只需要关心属性的 类型、名称、值.
+```python
+node = hou.pwd()
+geo  = node.geometry()
+ 
+# add global or detail attribute
+geo.addAttrib(hou.attribType.Global, "x_coord", 3)
+geo.addAttrib(hou.attribType.Global, "y_coord", 3)
+```
+执行代码后，可以在 Geometry Spreadsheet 中查看结果。
+
+![Geometry Spreadsheet](https://raw.githubusercontent.com/timi-liuliang/writing/master/2020/3.Houdini%20Python%20%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C/addattrib.png)
+
+## 参考
+[1]. [HoudiniTricks](https://houdinitricks.com/category/quicktips/). [CREATING ATTRIBUTES WITH PYTHON IN HOUDINI](https://houdinitricks.com/creating-attributes-with-python-in-houdini/) (2018)
