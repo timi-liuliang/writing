@@ -59,3 +59,49 @@ Tile 大小对效率的影响：
 16x16   4.373s
 32x32   4.634s
 64x64	6.828s
+
+地形高度修改触发
+
+1.重新计算包围盒
+2.重新计算各顶点法线
+使用该顶点的所有面法线相加求平均
+```cpp
+	FVector* VertexNormals = nullptr;
+	if (InCalcNormals)
+	{
+		// Calculate the normals for each of the two triangles per quad.
+		// Note that the normals at the edges are not correct because they include normals
+		// from triangles outside the current area. They are not updated
+		VertexNormals = new FVector[NumVertsX*NumVertsY];
+		FMemory::Memzero(VertexNormals, NumVertsX*NumVertsY * sizeof(FVector));
+
+		// Need to consider XYOffset for XY displacemented map
+		FVector2D* XYOffsets = new FVector2D[NumVertsX*NumVertsY];
+		FMemory::Memzero(XYOffsets, NumVertsX*NumVertsY * sizeof(FVector2D));
+		GetXYOffsetDataFast(X1, Y1, X2, Y2, XYOffsets, 0);
+
+		for (int32 Y = 0; Y < NumVertsY - 1; Y++)
+		{
+			for (int32 X = 0; X < NumVertsX - 1; X++)
+			{
+				FVector Vert00 = FVector(XYOffsets[(X + 0) + NumVertsX*(Y + 0)].X, XYOffsets[(X + 0) + NumVertsX*(Y + 0)].Y, ((float)InData[(X + 0) + InStride*(Y + 0)] - 32768.0f) * LANDSCAPE_ZSCALE) * DrawScale;
+				FVector Vert01 = FVector(XYOffsets[(X + 0) + NumVertsX*(Y + 0)].X, XYOffsets[(X + 0) + NumVertsX*(Y + 0)].Y + 1.0f, ((float)InData[(X + 0) + InStride*(Y + 1)] - 32768.0f) * LANDSCAPE_ZSCALE) * DrawScale;
+				FVector Vert10 = FVector(XYOffsets[(X + 0) + NumVertsX*(Y + 0)].X + 1.0f, XYOffsets[(X + 0) + NumVertsX*(Y + 0)].Y, ((float)InData[(X + 1) + InStride*(Y + 0)] - 32768.0f) * LANDSCAPE_ZSCALE) * DrawScale;
+				FVector Vert11 = FVector(XYOffsets[(X + 0) + NumVertsX*(Y + 0)].X + 1.0f, XYOffsets[(X + 0) + NumVertsX*(Y + 0)].Y + 1.0f, ((float)InData[(X + 1) + InStride*(Y + 1)] - 32768.0f) * LANDSCAPE_ZSCALE) * DrawScale;
+
+				FVector FaceNormal1 = ((Vert00 - Vert10) ^ (Vert10 - Vert11)).GetSafeNormal();
+				FVector FaceNormal2 = ((Vert11 - Vert01) ^ (Vert01 - Vert00)).GetSafeNormal();
+
+				// contribute to the vertex normals.
+				VertexNormals[(X + 1 + NumVertsX*(Y + 0))] += FaceNormal1;
+				VertexNormals[(X + 0 + NumVertsX*(Y + 1))] += FaceNormal2;
+				VertexNormals[(X + 0 + NumVertsX*(Y + 0))] += FaceNormal1 + FaceNormal2;
+				VertexNormals[(X + 1 + NumVertsX*(Y + 1))] += FaceNormal1 + FaceNormal2;
+			}
+		}
+
+		delete[] XYOffsets;
+	}
+```
+3.更新碰撞数据
+4.重新生成LOD数据
