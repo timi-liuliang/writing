@@ -110,8 +110,51 @@ FLandscapeEditDataInterface::SetHeightData 方法主要操作有：
 SetHeightData 函数只修改了非边缘顶点的法线，如果要更新当前范围内所有顶点的法线，必须扩大传入的范围。
 
 #### 获取Layer数据
+Layer数据的获取与高度数据的获取类似，区别主要有几点
+1. Layer数据格式为 uint8, 高度数据格式为 uint16
+2. 每个地形拥有多层Layer, 所以GetWeightDataFast 函数需要 ULandscapeLayerInfoObject* 对像做为输入。
+```cpp
+// Get LayerData
+bool GetLandscapeLayerData(int32& MinX, int32& MinY, int32& MaxX, int32& MaxY, TArray<uint8>& LayerData, ALandscapeProxy* InLandscape, const FString& LayerName)
+{ 
+	ULandscapeInfo* LandscapeInfo = InLandscape->GetLandscapeInfo();
+	ULandscapeLayerInfoObject* InfoObject = LandscapeInfo->GetLayerInfoByName(*LayerName);
+	if (InfoObject)
+	{
+		MinX = MAX_int32;
+		MinY = MAX_int32;
+		MaxX = -MAX_int32;
+		MaxY = -MAX_int32;
+		if (GetLandscapeExtent(MinX, MinY, MaxX, MaxY, InLandscape->LandscapeComponents))
+		{
+			FLandscapeEditDataInterface LandscapeEdit(InLandscape->GetLandscapeInfo());
+			LayerData.AddZeroed((MaxX - MinX + 1) * (MaxY - MinY + 1));
+			LandscapeEdit.GetWeightDataFast(InfoObject, MinX, MinY, MaxX, MaxY, LayerData.GetData(), 0);
+
+			return true;
+		}
+	}
+
+	return false;
+}
+```
+
+3. 对于WeightBlendLayer，每个顶点相关的所有Layer值相加为1， 各Layer间行成一种此消彼长的关系。当某Layer数据增加是，其它Layer数据会根据当前值按比例缩小。
+```cpp
+Weight = FMath::Clamp<uint8>(FMath::RoundToInt((float)(255 - NewWeight) * (float)Weight / (float)OtherLayerWeightSum), 0, 255);
+```
 
 #### 设置Layer数据
+
+##### 所有Layer值全为零的情况。
+
+##### 更新植被显示
+除了FoliageSystem 外， UE4中还以通过材质配置草的渲染，其中草的生成依赖于地形Layer数据。在地形Layer数据修改后，需要调用以下代码更新草。
+```cpp
+// Invalid Component Data
+TSet<ULandscapeComponent*> ComponentsSet(LandscapeActor->LandscapeComponents);
+ALandscapeProxy::InvalidateGeneratedComponentData(ComponentsSet);
+```
 
 #### 性能优化
 
@@ -224,5 +267,5 @@ Tile 大小对效率的影响：
 #### 侍续
 
 1. 地形LOD的实现细节
-2. 高度数据与Layer数据在渲染中的使用细节
+2. 高度数据(HeightmapTexture)与Layer数据(MobileWeightmapTextures)在渲染中的使用细节
 
