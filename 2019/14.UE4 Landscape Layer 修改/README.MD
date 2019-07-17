@@ -1,4 +1,88 @@
-# UE4 Landscape Layer 数据修改
+# UE4 Landscape 修改
+
+Landscape主要由 高度、混合比、材质等数据组成。此文我们重点讨论如何快速修改高度与混合比。
+
+## 一.地形创建
+1.地形创建与创建普通Actor并没有区别，通过SpawnActor方法实现,创建时可以指定 Transform.
+```cpp
+LandscapeMaskActor = World->SpawnActor<ALandscape>(NewLandscapeLocation, NewLandscapeRotation);
+```
+2.设置材质
+```cpp
+FString NewLandscapeMaterialName = TEXT("/Game/Materials/PCG_LandscapeMask.PCG_LandscapeMask");
+LandscapeMaterial = LoadObject<UMaterialInterface>(NULL, *NewLandscapeMaterialName, NULL, LOAD_NoWarn);
+LandscapeMaskActor->LandscapeMaterial = LandscapeMaterial.Get();
+```
+3.导入高度、Layer数据, 指定地形范围及Sections设置。
+```cpp
+LandscapeMaskActor->Import(FGuid::NewGuid(), MinX, MinY, MaxX, MaxY, NumSubsections, SubsectionSizeQuads, HeightData.GetData(), nullptr, ImportLayers, ELandscapeImportAlphamapType::Additive);
+```
+4.设置LayerObject
+只有设置了 ULandscapeLayerInfoObject 后，地形的Layer数据才可以被修改，地形才能正常显示。
+ULandscapeLayerInfoObject可以提前创建保存为资源，被多个地形重复使用。
+```cpp
+void AssignLayerInfoObjects(ALandscapeProxy* Landscape, int32 LayerIndex)
+{
+	FSoftObjectPath AssetPath(FString::Printf(TEXT("/Game/PCGPipeline/Mask/SpeedGame_Biome_Layer%d_LayerInfo.SpeedGame_Biome_Layer%d_LayerInfo"), LayerIndex, LayerIndex));
+	FAssetData AssetData;
+	UAssetManager::Get().GetAssetDataForPath(AssetPath, AssetData);
+	UObject* Object = AssetData.GetAsset();
+	if (Object)
+	{
+		ULandscapeInfo* LandscapeInfo = Landscape->GetLandscapeInfo();
+		ULandscapeLayerInfoObject* LandscapeInfoObject = const_cast<ULandscapeLayerInfoObject*>(CastChecked<ULandscapeLayerInfoObject>(Object));
+
+		FLandscapeInfoLayerSettings& LayerSettings = LandscapeInfo->Layers[LayerIndex];
+		LayerSettings.LayerInfoObj = LandscapeInfoObject;
+		LandscapeInfo->CreateLayerEditorSettingsFor(LandscapeInfoObject);
+	}
+}
+```
+
+## 高度修改
+#### 1.格式与高度转换
+地形高度数据一般又称高度图，每个顶点的高度由一个uint16来表示，UE4高度转换算法把uint16映射到 [-256, 256]. 然后再和 DrawScale 一起决定了地形的最终渲染效果(在平时的高度修改计算中我们并不考虑DrawScale)。   
+代码实现可以参考
+[LandscapeDataAccess.h](https://github.com/EpicGames/UnrealEngine/blob/release/Engine/Source/Runtime/Landscape/Public/LandscapeDataAccess.h) 中 GetLocalHeight 函数的实现
+```cpp
+#define LANDSCAPE_ZSCALE	(1.0f/128.0f)
+const int32 MaxValue = 65535;
+const float MidValue = 32768.f;
+FORCEINLINE float GetLocalHeight(uint16 Height)
+{
+	return ((float)Height - MidValue) * LANDSCAPE_ZSCALE;
+}
+```
+#### 2.获取高度法线数据
+个人一般通过 [FLandscapeEditDataInterface](https://github.com/EpicGames/UnrealEngine/blob/release/Engine/Source/Runtime/Landscape/Public/LandscapeEdit.h#L111) 类的 GetHeightDataFast 方法来获取高度及法线数据。其中法线数据是可选项，可以不获取。
+```cpp
+TArray<uint16> HeightData;
+
+FLandscapeEditDataInterface LandscapeEdit(InLandscape->GetLandscapeInfo());
+LandscapeEdit.GetHeightDataFast(MinX, MinY, MaxX, MaxY, HeightData.GetData(), 0);
+```
+
+MinX, MinY, MaxX, MaxY 定义下获取高度的范围。以 MinX = 0, MinY = 0, MaxX =16, MaxY = 16] 为例,  要获取的范围为 16x16, 共有17x17个顶点，自然最终返回的数据也是17x17共289个高度值。
+
+对于多Level的World, 场景中会存在多个 ALandscapeProxy*， 所有的这些ALandscapeProxy会共用同一个ULandscapeInfo, 如果我们只想获取某一个ALandscapeProxy的高度数据，可以通过其 LandscapeComponents变量获取范围。
+```cpp
+bool GetLandscapeExtent(int32& MinX, int32& MinY, int32& MaxX, int32& MaxY, ALandscapeProxy* InLandscape)
+{
+	MinX = MAX_int32;
+	MinY = MAX_int32;
+	MaxX = MIN_int32;
+	MaxY = MIN_int32;
+
+	// Find range of entire landscape
+	for (const ULandscapeComponent* Comp : InLandscape->LandscapeComponents)
+	{
+		Comp->GetComponentExtent(MinX, MinY, MaxX, MaxY);
+	}
+
+	return (MinX != MAX_int32);
+}
+```
+
 
 代码实现位于文件 LandscapeEdModePaintTools.cpp 中 
 FLandscapeToolStrokePaint
@@ -105,3 +189,5 @@ Tile 大小对效率的影响：
 ```
 3.更新碰撞数据
 4.重新生成LOD数据
+
+HeightMap Texture? 干什么用的？
