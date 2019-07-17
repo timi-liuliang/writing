@@ -64,7 +64,7 @@ LandscapeEdit.GetHeightDataFast(MinX, MinY, MaxX, MaxY, HeightData.GetData(), 0)
 
 MinX, MinY, MaxX, MaxY 定义下获取高度的范围。以 MinX = 0, MinY = 0, MaxX =16, MaxY = 16] 为例,  要获取的范围为 16x16, 共有17x17个顶点，自然最终返回的数据也是17x17共289个高度值。
 
-对于多Level的World, 场景中会存在多个 ALandscapeProxy*， 所有的这些ALandscapeProxy会共用同一个ULandscapeInfo, 如果我们只想获取某一个ALandscapeProxy的高度数据，可以通过其 LandscapeComponents变量获取范围。
+对于多Level的World, 场景中会存在多个 ALandscapeProxy*， 所有的这些ALandscapeProxy会共用同一个ULandscapeInfo, 如果我们只想获取某一个ALandscapeProxy的高度数据，可以通过其 LandscapeComponents变量获取范围,然后再通过范围获取高度数据。
 ```cpp
 bool GetLandscapeExtent(int32& MinX, int32& MinY, int32& MaxX, int32& MaxY, ALandscapeProxy* InLandscape)
 {
@@ -83,6 +83,37 @@ bool GetLandscapeExtent(int32& MinX, int32& MinY, int32& MaxX, int32& MaxY, ALan
 }
 ```
 
+#### 3.设置高度数据
+相对应的，我们通过 FPCGTerrainEditInterface 的 SetHeightData方法来设置高度数据。
+
+FLandscapeEditDataInterface::SetHeightData 方法主要操作有：
+1. 查找位于范围内的的所有LandscapeComponents
+2. 根据传入的高度数据计算法线，或者通过传入的法线数据更新法线
+3. 更新高度数据与法线数据，这里UE4只用一个象素就存储了高度及法线数据，高度因为精度要求为uint16分别占用了RG通道，法线因为是单位向量，所以用BA通道分别存储了法线的X,Y值。因为高度数据与地形位置的X,Z数据是分开保存的，这里可以推测。用于地形绘制的索引及顶点位置的XZ数据应该是所有地形Component共用的，只有一份（侍验证）。
+```cpp
+	// Update the texture
+	TexData.R = Height >> 8;
+	TexData.G = Height & 255;
+
+	// Update normals if we're not on an edge vertex
+	FVector Normal = VertexNormals[NormalDataIndex].GetSafeNormal();
+	TexData.B = FMath::RoundToInt(127.5f * (Normal.X + 1.0f));
+	TexData.A = FMath::RoundToInt(127.5f * (Normal.Y + 1.0f));
+```
+
+
+3. 更新包围盒
+4. 所有组件创建高度MipMaps(LOD)
+5. 更新碰撞数据(物理)，如果碰撞数据修改影响寻路，则更新寻路数据
+
+##### 警告
+SetHeightData 函数只修改了非边缘顶点的法线，如果要更新当前范围内所有顶点的法线，必须扩大传入的范围。
+
+#### 获取Layer数据
+
+#### 设置Layer数据
+
+#### 性能优化
 
 代码实现位于文件 LandscapeEdModePaintTools.cpp 中 
 FLandscapeToolStrokePaint
@@ -190,4 +221,8 @@ Tile 大小对效率的影响：
 3.更新碰撞数据
 4.重新生成LOD数据
 
-HeightMap Texture? 干什么用的？
+#### 侍续
+
+1. 地形LOD的实现细节
+2. 高度数据与Layer数据在渲染中的使用细节
+
