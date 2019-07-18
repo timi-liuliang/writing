@@ -225,7 +225,13 @@ FillLayer会把当前Layer置1， 导致其它Layer的所有WeightmapTexture被�
 目前用于Mask编辑的地形创建耗时较长，可以尝试异步方式创建Actor,避免阻塞主线程。
 
 #### 侍续
-1. 地形LOD的实现细节, 最低级LOD面数为最高级高LOD面数的 1/ 3969
+1. 地形LOD的实现细节, 最低级LOD面数为最高级高LOD面数的 1/ 3969. 
+
+![](https://github.com/timi-liuliang/writing/blob/master/2019/14.UE4%20Landscape%20Layer%20%E4%BF%AE%E6%94%B9/LOD1.png?raw=true)  
+每个Component有4个SubSection组成，在最高LOD下，每个SubSection由63x63x2个三角形面(黄色区域是一个Compont).
+![](https://github.com/timi-liuliang/writing/blob/master/2019/14.UE4%20Landscape%20Layer%20%E4%BF%AE%E6%94%B9/LOD2.png?raw=true)
+每个Component有4个SubSection组成，在最低LOD下，每个SubSection由1x1x2个三角形面 (黄色区域是一个Compont)
+
 2. 高度数据(HeightmapTexture)与Layer数据(WeightmapTextures)在渲染中的使用细节
 
 ## 参考
