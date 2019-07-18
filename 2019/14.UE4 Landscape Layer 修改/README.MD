@@ -1,9 +1,9 @@
 # UE4 Landscape 修改
 
-Landscape主要由 高度、混合比、材质等数据组成。此文我们重点讨论如何快速修改高度与混合比。
+Landscape主要由 高度、Layer(混合比)、材质等数据组成。此文我们重点讨论如何快速修改高度与混合比。
 
 ## 一.地形创建
-1.地形创建与创建普通Actor并没有区别，通过SpawnActor方法实现,创建时可以指定 Transform.
+1.创建地形与创建普通Actor并没有区别，通过SpawnActor方法实现,创建时可以指定 Transform.
 ```cpp
 LandscapeMaskActor = World->SpawnActor<ALandscape>(NewLandscapeLocation, NewLandscapeRotation);
 ```
@@ -41,7 +41,7 @@ void AssignLayerInfoObjects(ALandscapeProxy* Landscape, int32 LayerIndex)
 
 ## 二.地形高度修改
 ### 1.格式与高度转换
-地形高度数据一般又称高度图，每个顶点的高度由一个uint16来表示，UE4高度转换算法把uint16映射到 [-256, 256]. 然后再和 DrawScale 一起决定了地形的最终渲染效果(在平时的高度修改计算中我们并不考虑DrawScale)。   
+地形高度数据一般又称高度图，每个顶点的高度由一个uint16来表示，UE4高度转换算法把uint16映射到 [-256, 256]. 然后再和 DrawScale 一起决定了地形的最终渲染效果。   
 代码实现可以参考
 [LandscapeDataAccess.h](https://github.com/EpicGames/UnrealEngine/blob/release/Engine/Source/Runtime/Landscape/Public/LandscapeDataAccess.h) 中 GetLocalHeight 函数的实现
 ```cpp
@@ -96,7 +96,7 @@ FLandscapeEditDataInterface::SetHeightData 方法主要操作有：
 	n&nbsp;&nbsp;&nbsp;:&nbsp;顶点相关面数量   
 	Vn&nbsp;:&nbsp;顶点法线   
 	Fn&nbsp;:&nbsp;面法线函数   
-3. 更新高度数据与法线数据，这里UE4只用一个象素就存储了高度及法线数据，高度因为精度要求为uint16分别占用了RG通道，法线因为是单位向量，所以用BA通道分别存储了法线的X,Y值。因为高度数据与地形位置的X,Z数据是分开保存的，（推测：用于地形绘制的索引及顶点位置的XZ数据应该是所有地形Component共用的，只有一份）。
+3. 更新高度数据与法线数据，UE4只用一个象素就存储了高度及法线数据，高度因为精度要求为uint16分别占用了RG通道，法线因为是单位向量，所以用BA通道分别存储了法线的X,Y值, Z值由sqrtf(1-X*X-Y*Y)求出。，（推测：因为高度数据与地形位置的X,Z数据是分开保存的， 则用于地形绘制的索引及顶点位置的XZ数据应该是所有地形Component共用的，只有一份）。
 ```cpp
 // Update the texture
 TexData.R = Height >> 8;
@@ -119,8 +119,8 @@ SetHeightData 函数只修改了非边缘顶点的法线，如果要更新当前
 ## 地形Layer数据修改
 ### 获取Layer数据
 Layer数据的获取与高度数据的获取类似，区别主要有几点
-1. Layer数据格式为 uint8, 高度数据格式为 uint16
-2. 每个地形拥有多层Layer, 所以GetWeightDataFast 函数需要 ULandscapeLayerInfoObject* 对像做为输入。
+1. Layer数据格式为 uint8, 高度数据格式为 uint16   
+2. 每个地形拥有多层Layer, 所以GetWeightDataFast 函数需要 ULandscapeLayerInfoObject* 对像做为输入。   
 ```cpp
 // Get LayerData
 bool GetLandscapeLayerData(int32& MinX, int32& MinY, int32& MaxX, int32& MaxY, TArray<uint8>& LayerData, ALandscapeProxy* InLandscape, const FString& LayerName)
@@ -147,7 +147,7 @@ bool GetLandscapeLayerData(int32& MinX, int32& MinY, int32& MaxX, int32& MaxY, T
 }
 ```
 
-3. 对于WeightBlendLayer，每个顶点相关的所有Layer值相加为1， 各Layer间行成一种此消彼长的关系。当某Layer数据增加是，其它Layer数据会根据当前值按比例缩小。
+3. 对于WeightBlendLayer，每个顶点相关的所有Layer值相加为1， 各Layer间行成一种此消彼长的关系。当某Layer数据增加是，其它Layer数据会根据当前值按比例缩小。   
 ```cpp
 Weight = FMath::Clamp<uint8>(FMath::RoundToInt((float)(255 - NewWeight) * (float)Weight / (float)OtherLayerWeightSum), 0, 255);
 ```
@@ -166,11 +166,11 @@ void OverrideLandscapeWeightData(int32 MinX, int32 MinY, int32 MaxX, int32 MaxY,
 ```
 
 FLandscapeEditDataInterface::SetHeightData 方法主要操作有：   
-1.若对应LyaerIdx的贴图不存在，则创建新的WeightTexture。
-2.调整其它层Weight, 保证所有层数值相加为255。着色器中会映射[0-255]为[0-1]
-3.更新WeightmapMips(推测为地形LOD 渲染时，提高纹理采样效率，降低带宽占用)
-4.更新Layer相关的物理数据; 物理材质是与Layer绑定的，如摩擦力等。
-5.清空Layer, 若某Layer所有数据全为0, 则删除WeightTexture.
+1. 若对应LyaerIdx的贴图不存在，则创建新的WeightTexture。  
+2. 调整其它层Weight, 保证所有层数值相加为255。着色器中会映射[0-255]为[0-1]
+3. 更新WeightmapMips(推测为地形LOD 渲染时，提高纹理采样效率，降低带宽占用)
+4. 更新Layer相关的物理数据; 物理材质是与Layer绑定的，如摩擦力等。
+5. 清空Layer, 若某Layer所有数据全为0, 则删除WeightTexture.
 
 #### 更新植被显示
 除了FoliageSystem 外， UE4中还以通过材质配置草的渲染，其中草的生成依赖于地形Layer数据。在地形Layer数据修改后，需要调用以下代码更新草的显示。
@@ -219,12 +219,12 @@ FLandscapeEditDataInterface::SetAlphaData, 耗时占比超过98%。
 FillLayer会把当前Layer置1， 导致其它Layer的所有WeightmapTexture被删除，严重影响编辑效率。
 
 ### 3. 并行计算
-对数据的分块操作以及各种计算，其数据都是只读的，且不相互影响。可以使用ParallFor 进行多线程并行处理，提升效率。
+对数据的分块操作以及各种计算，其数据都是只读的，且不相互影响。可以使用[ParallelFor](https://api.unrealengine.com/INT/API/Runtime/Core/Async/ParallelFor/index.html) 进行多线程并行处理，提升效率。
 
 ### 4. 异步创建 Actor（未实现）
 目前用于Mask编辑的地形创建耗时较长，可以尝试异步方式创建Actor,避免阻塞主线程。
 
-#### 侍续
+#### 待续
 1. 地形LOD的实现细节, 最低级LOD面数为最高级高LOD面数的 1/ 3969. 
 
 ![](https://github.com/timi-liuliang/writing/blob/master/2019/14.UE4%20Landscape%20Layer%20%E4%BF%AE%E6%94%B9/LOD1.png?raw=true)  
