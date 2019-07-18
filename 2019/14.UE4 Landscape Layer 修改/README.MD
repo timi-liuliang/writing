@@ -124,7 +124,7 @@ Layer数据的获取与高度数据的获取类似，区别主要有几点
 ```cpp
 // Get LayerData
 bool GetLandscapeLayerData(int32& MinX, int32& MinY, int32& MaxX, int32& MaxY, TArray<uint8>& LayerData, ALandscapeProxy* InLandscape, const FString& LayerName)
-{ 
+{
 	ULandscapeInfo* LandscapeInfo = InLandscape->GetLandscapeInfo();
 	ULandscapeLayerInfoObject* InfoObject = LandscapeInfo->GetLayerInfoByName(*LayerName);
 	if (InfoObject)
@@ -204,7 +204,7 @@ TimeProfiler     FPCGTerrainSyncHelper::AddLayerWeight+PCGTerrainSyncHelper.cpp"
 纹理加载、数据计算、InvalidComponentData 对性能影响较低; 主要的耗时函数为
 FLandscapeEditDataInterface::SetAlphaData, 耗时占比超过98%。
 
-分块后 应用River_Layer， 耗时在1秒以内。 
+分块后 应用River_Layer， 耗时在1秒以内。
 
 #### Tile大小对效率的影响：
 单Level，Layer修改总耗时
@@ -225,7 +225,7 @@ FillLayer会把当前Layer置1， 导致其它Layer的所有WeightmapTexture被�
 目前用于Mask编辑的地形创建耗时较长，可以尝试异步方式创建Actor,避免阻塞主线程。
 
 #### 待续
-1. 地形LOD的实现细节, 最低级LOD面数为最高级高LOD面数的 1/ 3969. 
+1. 地形LOD的实现细节, 最低级LOD面数为最高级高LOD面数的 1/ 3969.
 
 ![](https://github.com/timi-liuliang/writing/blob/master/2019/14.UE4%20Landscape%20Layer%20%E4%BF%AE%E6%94%B9/LOD1.png?raw=true)  
 每个Component有4个SubSection组成，在最高LOD下，每个SubSection由63x63x2个三角形面(黄色区域是一个Compont).
@@ -236,4 +236,3 @@ FillLayer会把当前Layer置1， 导致其它Layer的所有WeightmapTexture被�
 
 ## 参考
 1. Epic Games (1998-2019) .[ Landscape Outdoor Terrain](https://docs.unrealengine.com/en-US/Engine/Landscape/index.html)
-
