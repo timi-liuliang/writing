@@ -56,6 +56,8 @@ UClass* CommandletClass = FindObject<UClass>(ANY_PACKAGE,*Token,false);
 ```
 太晚加载插件会导致无法找到 UCommandlet类，无法正常执行 Commandlet。
 
+更多LoadingPhase值请参考 [ELoadingPhase::Type](https://github.com/EpicGames/UnrealEngine/blob/release/Engine/Source/Runtime/Projects/Public/ModuleDescriptor.h) 枚举。
+
 ##### 5.配置  
 UCommandlet的配置会影响调用流程，不合理的配置会导致程序崩溃。
 ```cpp
