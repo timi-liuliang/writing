@@ -7,7 +7,7 @@
 [ImportAssets](https://github.com/EpicGames/UnrealEngine/blob/release/Engine/Source/Editor/UnrealEd/Public/Commandlets/ImportAssetsCommandlet.h)等等。
 
 ### 快速入门
-我们可以通过学习官方的[CommandletPlugin](https://github.com/ue4plugins/CommandletPlugin)快速入门Commandlet的编写。   
+我们可以通过学习官方的[CommandletPlugin](https://github.com/ue4plugins/CommandletPlugin)插件快速入门Commandlet的编写。   
 其核心内容是，实现一个继承自UCommandlet的类，并覆写其 Main 函数。
 ```cpp
 UCLASS()
@@ -24,8 +24,9 @@ public:
 };
 ```
 CommandletPlguin中的其它代码与内容都是服务于UE4的插件机制，与Commandlet机制无关
-### 注意事项   
+### 注意事项
 ##### 1.源码位置
+
 ##### 2.名称关联  
 其中cook在C++中对应的类为UCookCommandlet，不区分大小写。
 ##### 3.加载顺序  
