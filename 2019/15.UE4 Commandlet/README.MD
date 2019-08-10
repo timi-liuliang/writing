@@ -2,10 +2,9 @@
 
 ### 概述
 在基于UE4的游戏的开发过程中，有很多工作需要以命令行传参的形式去执行。最常见的如   
-[Content Cooking](https://docs.unrealengine.com/en-US/Engine/Deployment/Cooking/index.html)   
-[CompileAllBluePrints](https://github.com/EpicGames/UnrealEngine/blob/release/Engine/Source/Editor/UnrealEd/Public/Commandlets/CompileAllBlueprintsCommandlet.h)   
-[ImportAssets](https://github.com/EpicGames/UnrealEngine/blob/release/Engine/Source/Editor/UnrealEd/Public/Commandlets/ImportAssetsCommandlet.h)   
-等等。
+[Content Cooking](https://docs.unrealengine.com/en-US/Engine/Deployment/Cooking/index.html)、
+[CompileAllBluePrints](https://github.com/EpicGames/UnrealEngine/blob/release/Engine/Source/Editor/UnrealEd/Public/Commandlets/CompileAllBlueprintsCommandlet.h)、
+[ImportAssets](https://github.com/EpicGames/UnrealEngine/blob/release/Engine/Source/Editor/UnrealEd/Public/Commandlets/ImportAssetsCommandlet.h) 等等。
 
 ### 快速入门
 我们可以通过学习官方的[CommandletPlugin](https://github.com/ue4plugins/CommandletPlugin)插件快速入门Commandlet的编写。   
