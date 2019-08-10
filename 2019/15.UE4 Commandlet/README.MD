@@ -26,14 +26,50 @@ public:
 CommandletPlguin中的其它代码与内容都是服务于UE4的插件机制，与Commandlet机制无关
 ### 注意事项
 ##### 1.源码位置
-
+UCommandlet的调用代码主要位于FEngineLoop::PreInit函数中
+![Source Code](https://github.com/timi-liuliang/writing/blob/master/2019/15.UE4%20Commandlet/commandlet_source_code.png?raw=true)
 ##### 2.名称关联  
-其中cook在C++中对应的类为UCookCommandlet，不区分大小写。
-##### 3.加载顺序  
-##### 4.配置  
+UE4通过类名称查找对应的Commandlet类，不区分大小写。例：
+HelloWorld 对应 UHelloWorldCommandlet
+```cpp
+// 添加 "Commandlet" 后缀
+if (Token.StartsWith(TEXT("run=")))
+{
+  Token = Token.RightChop(4);
+  if (!Token.EndsWith(TEXT("Commandlet")))
+  {
+    Token += TEXT("Commandlet");
+  }
+}
+```
+```cpp
+// 根据名称查找对应的Commandlet类
+UClass* CommandletClass = FindObject<UClass>(ANY_PACKAGE,*Token,false);
+```
+##### 3.启用插件
+插件编译后，默认未被启用;切记启用插件后再调用Commandlet, 否则会导致查找Commandlet失败。
+##### 4.加载顺序  
+由于Commandlet的调用位于 FEngineLoop::PreInit() 函数中，则此Commandlet所在插件的加载顺序特别重要。
+以[CommandletPlugin.uplugin](https://github.com/ue4plugins/CommandletPlugin/blob/master/CommandletPlugin.uplugin) 为例，其 LoadingPhase 默认值为
+```ini
+"LoadingPhase" : "Default"
+```
+太晚加载插件会导致无法找到 UCommandlet类，无法正常执行 Commandlet。
+
+##### 5.配置  
+UCommandlet的配置会影响调用流程，不合理的配置会导致程序崩溃。
+```cpp
+UHelloWorldCommandlet::UHelloWorldCommandlet()
+{
+	IsClient = false;
+	IsEditor = true;
+	IsServer = false;
+	LogToConsole = false;
+}
+```
 
 ### 调用方式
-commandlet 通过 -run=${commandletname} options 的方式来执行，这里以cook为例,有两种调用方式。
+commandlet 通过 -run=${commandletname} options 的方式来执行，有两种调用方式。
 ```bat
 UE4Editor-Win64-Debug.exe <GameName or uproject> -run=HelloWorld
 ```
