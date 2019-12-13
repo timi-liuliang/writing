@@ -180,7 +180,7 @@ UE4 地形物理是基于Physx的 [PxHeightField](https://docs.nvidia.com/gamewo
 因此挖洞的物理精度是顶点。
 而渲染的精度并不是顶点，导致挖洞后地形物理与渲染会有误差。
 
-另：无论UE4的物理查看模式，还是 [PhysxVisualDebugger](https://developer.nvidia.com/physx-visual-debugger) 都不能正确标识挖洞区域。
+##### 另：无论UE4的物理查看模式，还是 [PhysxVisualDebugger](https://developer.nvidia.com/physx-visual-debugger) 都不能正确标识挖洞区域，跪求更好的物理数据查看调试方法。
 
 ## 参考
 1. Epic Games (1998-2019) .[ Landscape Outdoor Terrain](https://docs.unrealengine.com/en-US/Engine/Landscape/index.html)
