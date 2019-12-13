@@ -2,14 +2,15 @@
 Landscape主要由 高度、Layer(混合比)、材质等数据组成。此文我们只关注如何在地形上挖洞, 以及如何导出导入挖洞数据。
 
 ## 一.编辑器挖洞操作
-1.打开UE4编辑器
-2.进入Landscape EdMode 面板
-3.选择 Sculpt/Visibility工具
-4.在ViewPort视口中使用Brush修改地形
+1.打开UE4编辑器   
+2.进入Landscape EdMode 面板    
+3.选择 Sculpt/Visibility工具    
+4.在ViewPort视口中使用Brush修改地形    
 ![](https://github.com/timi-liuliang/writing/blob/master/2019/16.UE4%20Modidfy%20Visibility%20Layer/ModifyVisibilityLayer.gif?raw=true)  
 
 ## 二.程序视角
-同地形的混合权重一样，地形挖洞修改的也是ULandscapeLayerInfoObject数据。只是挖洞使用了一个编辑器模式下独有的静态全局 ULandscapeLayerInfoObject.  
+同地形的混合权重一样，地形挖洞修改的也是ULandscapeLayerInfoObject数据。   
+只是挖洞使用了一个编辑器模式下独有的静态全局 ULandscapeLayerInfoObject.  
 所有的挖洞操作都是通过操作VisibilityLayer实现的    
 ![](https://github.com/timi-liuliang/writing/blob/master/2019/16.UE4%20Modidfy%20Visibility%20Layer/Visibility.png?raw=true)   
 
@@ -37,7 +38,7 @@ void SaveImage(const FString& FilePathName, int32 Width, int32 Height, const TAr
 	SaveImageInternal<uint8>(FilePathName, Width, Height, RawData);
 }
 ```
-其次我们需要获取地形的范围，从而可以确定导出纹理大小
+其次我们需要获取地形的范围，从而可以确定导出纹理的大小
 ```cpp
 bool GetLandscapeExtent(int32& MinX, int32& MinY, int32& MaxX, int32& MaxY, const TArray<ULandscapeComponent*>& Components)
 {
@@ -57,10 +58,12 @@ bool GetLandscapeExtent(int32& MinX, int32& MinY, int32& MaxX, int32& MaxY, cons
 ```
 
 ### 2.数据导出
-1. 通过 FLandscapeEditDataInterface 的 GetWeightDataFast接口，获取VisibilityLayer的数据(格式：TArray<uint8>)。
-2. 存储为深度为8的png格式
+1. 通过 FLandscapeEditDataInterface 的 GetWeightDataFast接口，获取VisibilityLayer的数据。  
+2. 存储为深度为8的png格式   
 ```cpp
-bool GetLandscapeLayerData(int32& MinX, int32& MinY, int32& MaxX, int32& MaxY, TArray<uint8>& LayerData, ALandscapeProxy* InLandscape, ULandscapeLayerInfoObject* LayerInfoObject)
+bool GetLandscapeLayerData(int32& MinX, int32& MinY, int32& MaxX, int32& MaxY, 
+	TArray<uint8>& LayerData, ALandscapeProxy* InLandscape, 
+	ULandscapeLayerInfoObject* LayerInfoObject)
 {
 	if (LayerInfoObject)
 	{
@@ -170,6 +173,10 @@ void InvalidComponents(TArray<ULandscapeComponent*>& LandscapeComponents)
 	ALandscapeProxy::InvalidateGeneratedComponentData(ComponentsSet);
 }
 ```
+
+### 4.物理碰撞
+
+
 
 ## 参考
 1. Epic Games (1998-2019) .[ Landscape Outdoor Terrain](https://docs.unrealengine.com/en-US/Engine/Landscape/index.html)
