@@ -164,15 +164,34 @@ m_debugDraw->update(elapsedTime, rb);
 ```
 #### 2.2.4 在引擎渲染窗口中直接查看物理数据
 ![](debug_visualization.png)
-此种通过外部工具查看物理模拟结果的方式，也只需要引擎提供少量的代码更改就可以实现。并且结果一定和物理引擎的真实运行数据相匹配(不匹配也是Nvidia Physx 的代码BUG)。   
-缺点是对于 Heightfield 及 Mesh 类型，因为没有缓存机制，每一帧都在更新所有的渲染数据，效率极其低下(暂不排除个人实现有问题)。   
+通过Debug Visualization 查看物理模拟结果的方式，也只需要引擎提供少量的代码更改就可以实现。并且结果一定和物理引擎的真实运行数据相匹配(不匹配也是Nvidia Physx 的代码BUG)。   
+缺点是对于 Heightfield 及 Mesh 类型，因为没有缓存机制，每一帧都在更新所有的渲染数据，效率极其低下(暂不排除个人实现有问题)。 且渲染表现上可控性不强。  
 [issue.visualizeHeightField very very slow... #432](https://github.com/NVIDIAGameWorks/PhysX/issues/432)
 
-### 3.1 引擎根据物理设置自己实现物理世界可视化功能。
+### 2.3 引擎根据物理设置自己实现物理世界可视化功能。
 比如UE4查看物理数据就是通过组件是否配置了物理的相关的属性，引擎自身实现的渲染功能。    
-所以在使用UE4查看物理数据时，对于一些团队自定义的组件，经常出现物理数据显示不正确的情况。需要由引擎团队成员负责管理维护。好处当然是想怎么渲染就怎么渲染，自由性比较大。工作量也大，提供更多就业机会。
+所以在使用UE4查看物理数据时，对于一些团队自定义的组件，经常出现物理数据显示不正确的情况。需要由引擎团队成员负责管理维护。好处当然是想怎么渲染就怎么渲染，自由性比较大。当然工作量也会大一些。
 
+#### 2.3.1 代码
+在UE4的代码中搜索 IsCollisionView 或 DrawCollision 等关键字可以快速定位相关代码
+```cpp
+void FGroupedSpriteSceneProxy::DebugDrawCollision(const FSceneView* View, int32 ViewIndex, FMeshElementCollector& Collector, bool bDrawSolid) const
+{
+	for (int32 InstanceIndex = 0; InstanceIndex < BodySetups.Num(); ++InstanceIndex)
+	{
+		if (UBodySetup* BodySetup = BodySetups[InstanceIndex].Get())
+		{
+			const FColor CollisionColor = FColor(157, 149, 223, 255);
+			const FMatrix GeomTransform = BodySetupTransforms[InstanceIndex] * GetLocalToWorld();
+			DebugDrawBodySetup(View, ViewIndex, Collector, BodySetup, GeomTransform, CollisionColor, bDrawSolid);
+		}
+	}
+}
+```
+
+#### 2.3.2 查看碰撞数据
+![](ue4-physxdebug.png)
 
 ## 参考
 [1]. [NVidia](https://github.com/NVIDIAGameWorks/PhysX). [NVIDIA PhysX SDK 4.1](https://houdinitricks.com/creating-attributes-with-python-in-houdini/) (2021)   
-[2]. [NVidia](https://github.com/NVIDIAGameWorks/PhysX). [Debug Visualization](https://docs.nvidia.com/gameworks/content/gameworkslibrary/physx/guide/Manual/DebugVisualization.html) (Unknown)
+[2]. [NVidia](https://github.com/NVIDIAGameWorks/PhysX). [Debug Visualization](https://docs.nvidia.com/gameworks/content/gameworkslibrary/physx/guide/Manual/DebugVisualization.html)
